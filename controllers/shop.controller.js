@@ -2,13 +2,14 @@ import Product from "../models/product.js";
 import Cart from "../models/cart.js";
 
 export const getProducts = (req, res) => {
-  Product.findAll().then(([rows, fieldData]) => {
-    res.render("shop/product-list", {
-      prods: rows,
-      pageTitle: "All Products",
-      path: "/products",
+  Product.findAll()
+    .then((products) => {
+      return res.send(products);
+      // return res.status(200).json(products);
+    })
+    .catch((error) => {
+      console.log(error);
     });
-  });
 };
 
 export const getProduct = (req, res) => {

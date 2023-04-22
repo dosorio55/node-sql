@@ -10,9 +10,11 @@ export const getAddProduct = (req, res) => {
 
 export const postAddProduct = (req, res) => {
   const { title, imageUrl, price, description } = req.body;
-  Product.create({ title, imageUrl, price, description }).then().catch((error) =>
-    console.log(error)
-  );
+  Product.create({ title, imageUrl, price, description })
+    .then((product) => {
+      res.send(`correctly saved ${product}`);
+    })
+    .catch((error) => console.log(error));
 };
 
 export const getEditProduct = (req, res) => {

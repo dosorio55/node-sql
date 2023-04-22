@@ -9,7 +9,7 @@
     "start": "nodemon app.js",
     "start-server": "node app.js"
   },
-  "author": "Maximilian Schwarzmüller",
+  "author": "Diego Osorio",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.38.0",

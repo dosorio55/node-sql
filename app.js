@@ -1,29 +1,34 @@
 import path from "path";
 import express from "express";
-import bodyParser from "body-parser";
 import get404 from "./controllers/error.js";
+import shopRoutes from "./routes/shop.route.js";
 import adminRoutes from "./routes/admin.js";
-import shopRoutes from "./routes/shop.js";
+// import bodyParser from "body-parser";
 import sequelizeEnviroment from "./util/database.js";
+import { fileURLToPath } from 'url';
 
-const app = express();
+const server = express();
 
-app.set("view engine", "ejs");
-app.set("views", "views");
+server.set("view engine", "ejs");
+server.set("views", "views");
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(import.meta.url, "public")));
+server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
+// server.use(bodyParser.urlencoded({ extended: true }));
+// server.use(express.static(path.join(path.resolve(), "public")));
 
-app.use("/admin", adminRoutes);
-app.use(shopRoutes);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+server.use(express.static(path.join(__dirname, 'public')));
 
-app.use(get404);
+server.use("/admin", adminRoutes);
+server.use(shopRoutes);
 
-sequelizeEnviroment
-  .sync()
-  .then(() => {
-    app.listen(3000);
-  })
-  .catch((error) => {
-    error;
+server.use(get404);
+
+const PORT = process.env.PORT || 3000;
+
+sequelizeEnviroment.sync().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
   });
+});
