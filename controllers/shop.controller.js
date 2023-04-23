@@ -1,12 +1,13 @@
 import Product from "../models/product.js";
 import Cart from "../models/cart.js";
+import { where } from "sequelize";
 
 export const getProducts = (req, res) => {
   Product.findAll()
-    .then((products) => {
-      return res.send(products);
+    .then(
+      (products) => res.send(products)
       // return res.status(200).json(products);
-    })
+    )
     .catch((error) => {
       console.log(error);
     });
@@ -14,13 +15,9 @@ export const getProducts = (req, res) => {
 
 export const getProduct = (req, res) => {
   const prodId = req.params.productId;
-  Product.findById(prodId, (product) => {
-    res.render("shop/product-detail", {
-      product: product,
-      pageTitle: product.title,
-      path: "/products",
-    });
-  });
+  Product.findOne({ where: { id: prodId } })
+    .then((product) => res.status(200).json(product))
+    .catch((error) => console.log(error));
 };
 
 export const getIndex = (req, res) => {

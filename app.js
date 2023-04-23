@@ -6,13 +6,14 @@ import adminRoutes from "./routes/admin.routes.js";
 import cors from "cors";
 // import bodyParser from "body-parser";
 import sequelizeEnviroment from "./util/database.js";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
 const server = express();
 
 server.set("view engine", "ejs");
 server.set("views", "views");
 
+/* it is use to transform the information incoming from the http requests */
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 // server.use(bodyParser.urlencoded({ extended: true }));
@@ -20,9 +21,8 @@ server.use(express.urlencoded({ extended: true }));
 
 server.use(cors("*"));
 
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-server.use(express.static(path.join(__dirname, 'public')));
+server.use(express.static(path.join(__dirname, "public")));
 
 server.use("/admin", adminRoutes);
 server.use(shopRoutes);
