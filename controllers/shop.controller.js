@@ -1,6 +1,5 @@
 import Product from "../models/product.js";
 import Cart from "../models/cart.js";
-import { where } from "sequelize";
 
 export const getProducts = (req, res) => {
   Product.findAll()
@@ -20,17 +19,17 @@ export const getProduct = (req, res) => {
     .catch((error) => console.log(error));
 };
 
-export const getIndex = (req, res) => {
-  Product.fetchAll()
-    .then(([rows, fieldData]) => {
-      res.render("shop/index", {
-        prods: rows,
-        pageTitle: "Shop",
-        path: "/",
-      });
-    })
-    .catch((error) => console.log(error));
-};
+// export const getIndex = (req, res) => {
+//   Product.fetchAll()
+//     .then(([rows, fieldData]) => {
+//       res.render("shop/index", {
+//         prods: rows,
+//         pageTitle: "Shop",
+//         path: "/",
+//       });
+//     })
+//     .catch((error) => console.log(error));
+// };
 
 export const getCart = (req, res) => {
   Cart.getCart((cart) => {

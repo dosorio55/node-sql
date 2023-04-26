@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  getIndex,
   getProducts,
   getProduct,
   getCart,
@@ -11,8 +10,6 @@ import {
 } from "../controllers/shop.controller.js";
 
 const router = express.Router();
-
-router.get("/", getIndex);
 
 router.get("/products", getProducts);
 
