@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "Complete Node.js Guide",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
     "start-server": "node app.js"
   },
-  "author": "Maximilian Schwarzmüller",
+  "author": "Diego Osorio",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.38.0",
@@ -16,10 +17,12 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
     "mysql2": "^3.2.0",
-    "pug": "^2.0.3"
+    "pug": "^2.0.3",
+    "sequelize": "^6.31.0"
   }
 }

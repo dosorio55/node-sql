@@ -1,24 +1,38 @@
-const path = require('path');
+import path from "path";
+import express from "express";
+import get404 from "./controllers/error.js";
+import shopRoutes from "./routes/shop.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
+import cors from "cors";
+// import bodyParser from "body-parser";
+import sequelizeEnviroment from "./util/database.js";
+import { fileURLToPath } from "url";
 
-const express = require('express');
-const bodyParser = require('body-parser');
+const server = express();
 
-const errorController = require('./controllers/error');
+server.set("view engine", "ejs");
+server.set("views", "views");
 
-const app = express();
+/* it is use to transform the information incoming from the http requests */
+server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
+// server.use(bodyParser.urlencoded({ extended: true }));
+// server.use(express.static(path.join(path.resolve(), "public")));
 
-app.set('view engine', 'ejs');
-app.set('views', 'views');
+server.use(cors("*"));
 
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+server.use(express.static(path.join(__dirname, "public")));
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+server.use("/admin", adminRoutes);
+server.use(shopRoutes);
 
-app.use('/admin', adminRoutes);
-app.use(shopRoutes);
+server.use(get404);
 
-app.use(errorController.get404);
+const PORT = process.env.PORT || 4000;
 
-app.listen(3000);
+sequelizeEnviroment.sync().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
+  });
+});
