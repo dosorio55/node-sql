@@ -1,4 +1,4 @@
-import Product from "../models/product.js";
+import Product from "../models/product.model.js";
 
 // export const getAddProduct = (req, res) => {
 //   res.render("admin/edit-product", {
@@ -8,15 +8,17 @@ import Product from "../models/product.js";
 //   });
 // };
 
-export const postAddProduct = (req, res) => {
+export const postAddProduct = async (req, res) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(title, price, imageUrl, description )
-  product.saveProduct()
-  // Product.create({ title, imageUrl, price, description })
-    .then((product) => {
-      res.send({ message: `correctly saved ${product}` });
-    })
-    .catch((error) => console.log(error));
+  const product = new Product(title, price, imageUrl, description);
+
+  try {
+    const savedProduct = await product.saveProduct();
+
+    return res.send({ message: `correctly saved ${savedProduct}` });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // export const getEditProduct = (req, res) => {
@@ -30,20 +32,27 @@ export const postAddProduct = (req, res) => {
 //     .catch((error) => console.log(error));
 // };
 
-// export const postEditProduct = (req, res) => {
-//   const { productId: id, title, price, imageUrl, description } = req.body;
+export const postEditProduct = async (req, res) => {
+  try {
+    const product = await Product.getProductById(req.body.productId);
+    const newProduct = req.body;
+    delete newProduct.productId;
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+    // product.title = title;
+    // product.price = price;
+    // product.description = description;
+    // product.imageUrl = imageUrl;
 
-//   Product.findByPk(id)
-//     .then((product) => {
-//       product.title = title;
-//       product.price = price;
-//       product.description = description;
-//       product.imageUrl = imageUrl;
-//       return product.save();
-//     })
-//     .then((product) => res.send(`the product ${product.dataValues.title}`))
-//     .catch((error) => console.log(error));
-// };
+    const updatedProduct = await Product.editProduct(product, newProduct);
+
+    res.send(`the product ${updatedProduct}`);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal server error");
+  }
+};
 
 // export const postDeleteProduct = (req, res) => {
 //   const prodId = req.body.productId;

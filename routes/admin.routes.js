@@ -3,7 +3,7 @@ import {
   // getAddProduct,
   postAddProduct,
   // getEditProduct,
-  // postEditProduct,
+  postEditProduct,
   // postDeleteProduct,
 } from "../controllers/admin.controller.js";
 
@@ -15,9 +15,7 @@ const router = express.Router();
 // /admin/add-product => POST
 router.post("/add-product", postAddProduct);
 
-// router.get("/edit-product/:productId", getEditProduct);
-
-// router.post("/edit-product", postEditProduct);
+router.post("/edit-product", postEditProduct);
 
 // router.post("/delete-product", postDeleteProduct);
 

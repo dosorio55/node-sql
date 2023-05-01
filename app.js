@@ -1,7 +1,7 @@
 import path from "path";
 import express from "express";
 // import get404 from "./controllers/error.js";
-// import shopRoutes from "./routes/shop.routes.js";
+import shopRoutes from "./routes/shop.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import cors from "cors";
 // import bodyParser from "body-parser";
@@ -25,7 +25,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 server.use(express.static(path.join(__dirname, "public")));
 
 server.use("/admin", adminRoutes);
-// server.use(shopRoutes);
+server.use(shopRoutes);
 
 // server.use(get404);
 
@@ -36,8 +36,3 @@ mongoConnect(() => {
     console.log(`Server started on port ${PORT}`);
   });
 });
-
-// sequelizeEnviroment.sync().then(() => {
-//   server.listen(PORT, () => {
-//   });
-// });

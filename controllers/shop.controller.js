@@ -1,8 +1,8 @@
-import Product from "../models/product.js";
-import Cart from "../models/cart.js";
+import Product from "../models/product.model.js";
+import Cart from "../models/cart.model.js";
 
 export const getProducts = (req, res) => {
-  Product.findAll()
+  Product.getAllProducts()
     .then(
       (products) => res.send(products)
       // return res.status(200).json(products);
@@ -12,11 +12,13 @@ export const getProducts = (req, res) => {
     });
 };
 
-export const getProduct = (req, res) => {
+export const getProduct = async (req, res) => {
   const prodId = req.params.productId;
-  Product.findOne({ where: { id: prodId } })
-    .then((product) => res.status(200).json(product))
-    .catch((error) => console.log(error));
+  const resProduct = await Product.getProductById(prodId);
+  return res.status(200).json(resProduct);
+  // Product.findOne({ where: { id: prodId } })
+  //   .then((product) => res.status(200).json(product))
+  //   .catch((error) => console.log(error));
 };
 
 // export const getIndex = (req, res) => {
