@@ -1,12 +1,5 @@
 import Product from "../models/product.model.js";
-
-// export const getAddProduct = (req, res) => {
-//   res.render("admin/edit-product", {
-//     pageTitle: "Add Product",
-//     path: "/admin/add-product",
-//     editing: false,
-//   });
-// };
+import NotFoundError from "../util/error.js";
 
 export const postAddProduct = async (req, res) => {
   const { title, imageUrl, price, description } = req.body;
@@ -21,17 +14,6 @@ export const postAddProduct = async (req, res) => {
   }
 };
 
-// export const getEditProduct = (req, res) => {
-//   const editMode = req.query.edit;
-
-//   const prodId = req.params.productId;
-//   Product.findByPk(prodId)
-//     .then((product) => {
-//       res.send({ ...product.dataValues, editMode });
-//     })
-//     .catch((error) => console.log(error));
-// };
-
 export const postEditProduct = async (req, res) => {
   try {
     const product = await Product.getProductById(req.body.productId);
@@ -40,25 +22,29 @@ export const postEditProduct = async (req, res) => {
     if (!product) {
       return res.status(404).send("Product not found");
     }
-    // product.title = title;
-    // product.price = price;
-    // product.description = description;
-    // product.imageUrl = imageUrl;
 
     const updatedProduct = await Product.editProduct(product, newProduct);
 
-    res.send(`the product ${updatedProduct}`);
+    return res.send(`the product ${updatedProduct}`);
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal server error");
   }
 };
 
-// export const postDeleteProduct = (req, res) => {
-//   const prodId = req.body.productId;
-//   Product.deleteById(prodId)
-//     .then(() => {
-//       res.redirect("/admin/products");
-//     })
-//     .catch((error) => console.log(error));
-// };
+export const postDeleteProduct = async (req, res) => {
+  const prodId = req.body.productId;
+
+  try {
+    const result = await Product.deleteById(prodId);
+    if (result.deletedCount > 0) {
+      return res.status(204).send();
+    } else {
+      throw new NotFoundError("No product found with that ID");
+    }
+  } catch (error) {
+    // Log the error using a logging library like Winston or Bunyan
+    res.status(500).send("Internal server error");
+    console.error(error);
+  }
+};
