@@ -52,7 +52,7 @@ server.use(
 server.use("/user", userRoutes);
 server.use(handleLogin);
 server.use("/admin", adminRoutes);
-server.use(shopRoutes);
+server.use("/cart", shopRoutes);
 
 const PORT = process.env.PORT || 4000;
 

@@ -3,6 +3,7 @@ import {
   getProducts,
   getProduct,
   getCart,
+  addProductToCart,
   // getCart,
   // postCart,
   // postCartDeleteProduct,
@@ -17,6 +18,8 @@ router.get("/products", getProducts);
 router.get("/products/:productId", getProduct);
 
 router.get("/get-cart", getCart);
+
+router.post("/add-product", addProductToCart);
 
 
 // router.get("/cart", getCart);
