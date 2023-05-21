@@ -26,10 +26,7 @@ export const getProduct = async (req, res) => {
 
 export const getCart = async (req, res) => {
   try {
-    // const userCart = await User.findById(req.user._id).select("cart -_id");
-
-    const userCart = await User.findById(req.user._id);
-    // const userCart = user.select("cart -_id");
+    const userCart = await req.user.populate("cart.items.productId");
 
     return res.status(200).json(userCart);
   } catch (error) {
@@ -39,13 +36,31 @@ export const getCart = async (req, res) => {
 
 export const addProductToCart = async (req, res) => {
   const { user } = req;
-  const { productId } = req.body;
+  const { reqProductId } = req.body;
   try {
-    const productToAdd = await Product.findById(productId);
-    user.cart.items = [...user.cart.items, {productId: productToAdd._id}];
-    // const user = await User.findById(userId);
+    const productToAdd = await Product.findById(reqProductId);
 
-    user.save();
+    let existentProductIndex = -1;
+    if (user.cart.items.length > 0) {
+      existentProductIndex = user.cart.items.findIndex((item) => {
+        // return item.productId === reqProductId;
+        // needs to use equals method of mongoose because 
+        // that one compared the objectId against the same object id
+        // which both are mongoose id type
+        return item.productId.equals(reqProductId);
+      });
+    }
+
+    if (existentProductIndex !== -1) {
+      user.cart.items[existentProductIndex].quantity++;
+    } else {
+      user.cart.items = [
+        ...user.cart.items,
+        { productId: productToAdd._id, quantity: 1 },
+      ];
+    }
+
+    await user.save();
 
     return res.status(200).json(user);
   } catch (error) {
