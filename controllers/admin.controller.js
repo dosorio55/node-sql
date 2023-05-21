@@ -3,10 +3,10 @@ import NotFoundError from "../util/error.js";
 
 export const postAddProduct = async (req, res) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(title, price, imageUrl, description);
+  const product = new Product({ title, price, imageUrl, description });
 
   try {
-    const savedProduct = await product.saveProduct();
+    const savedProduct = await product.save();
 
     return res.send({ message: `correctly saved ${savedProduct}` });
   } catch (error) {
@@ -15,15 +15,26 @@ export const postAddProduct = async (req, res) => {
 };
 
 export const postEditProduct = async (req, res) => {
+  const { productId } = req.body;
   try {
-    const product = await Product.getProductById(req.body.productId);
-    const newProduct = req.body;
-    delete newProduct.productId;
-    if (!product) {
+    const updatedTitle = req.body.title;
+    const updatedPrice = req.body.price;
+    const updatedImageUrl = req.body.imageUrl;
+    const updatedDesc = req.body.description;
+    const updatedProduct = await Product.findOneAndUpdate(
+      { _id: productId },
+      {
+        title: updatedTitle,
+        price: updatedPrice,
+        imageUrl: updatedImageUrl,
+        description: updatedDesc,
+      },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
       return res.status(404).send("Product not found");
     }
-
-    const updatedProduct = await Product.editProduct(product, newProduct);
 
     return res.send(`the product ${updatedProduct}`);
   } catch (error) {
@@ -36,9 +47,9 @@ export const postDeleteProduct = async (req, res) => {
   const prodId = req.body.productId;
 
   try {
-    const result = await Product.deleteById(prodId);
-    if (result.deletedCount > 0) {
-      return res.status(204).send();
+    const deletedProduct = await Product.findOneAndDelete({ _id: prodId });
+    if (deletedProduct) {
+      return res.send(deletedProduct);
     } else {
       throw new NotFoundError("No product found with that ID");
     }

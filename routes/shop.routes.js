@@ -2,6 +2,7 @@ import express from "express";
 import {
   getProducts,
   getProduct,
+  getCart,
   // getCart,
   // postCart,
   // postCartDeleteProduct,
@@ -14,6 +15,9 @@ const router = express.Router();
 router.get("/products", getProducts);
 
 router.get("/products/:productId", getProduct);
+
+router.get("/get-cart", getCart);
+
 
 // router.get("/cart", getCart);
 

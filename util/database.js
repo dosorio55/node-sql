@@ -1,23 +1,18 @@
-import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
+import { config } from "dotenv";
+
+config()
+
+const dbHost = process.env.SERVER_URL
 
 let db;
-const DB_URL = "mongodb://127.0.0.1:27017/node-complete";
+// const DB_URL = "mongodb://127.0.0.1:27017/node-complete";
 
-// const mongoConnect = (callback) => {
-//   MongoClient.connect(DB_URL)
-//     .then((client) => {
-//       db = client.db();
-//       callback();
-//     })
-//     .catch((error) => console.log(error));
-// };
-
-const mongoConnect = async (connect) => {
+const mongoConnect = async (connectCallback) => {
   try {
-    const client = await MongoClient.connect(DB_URL);
-    db = client.db();
+    await mongoose.connect(dbHost);
 
-    connect();
+    connectCallback();
   } catch (error) {
     console.log(error);
   }

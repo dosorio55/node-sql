@@ -1,74 +1,87 @@
 import Product from "../models/product.model.js";
-import Cart from "../models/cart.model.js";
+import User from "../models/user.model.js";
 
-export const getProducts = (req, res) => {
-  Product.getAllProducts()
-    .then(
-      (products) => res.send(products)
-      // return res.status(200).json(products);
-    )
-    .catch((error) => {
-      console.log(error);
-    });
+export const getProducts = async (req, res) => {
+  try {
+    if (req.session.isLoggedin) {
+      const products = await Product.find();
+      return res.status(200).json(products);
+    } else {
+      res.status(500).send("no session found please login");
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
 };
 
 export const getProduct = async (req, res) => {
   const prodId = req.params.productId;
-  const resProduct = await Product.getProductById(prodId);
-  return res.status(200).json(resProduct);
-  // Product.findOne({ where: { id: prodId } })
-  //   .then((product) => res.status(200).json(product))
-  //   .catch((error) => console.log(error));
+  try {
+    const resProduct = await Product.findById(prodId);
+    return res.status(200).json(resProduct);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 };
 
-// export const getIndex = (req, res) => {
-//   Product.fetchAll()
-//     .then(([rows, fieldData]) => {
-//       res.render("shop/index", {
-//         prods: rows,
-//         pageTitle: "Shop",
-//         path: "/",
-//       });
-//     })
-//     .catch((error) => console.log(error));
+export const getCart = async (req, res) => {
+  try {
+    // const { user } = req;
+    // const { userId } = req.body;
+    // const userCart = await User.findById(userId)
+    if (req.user instanceof User) {
+      const userCart = await req.user
+        .populate("cart.items.productId")
+        .execPopulate();
+      // .populate({
+      //   path: "cart.items.productId",
+      // })
+      // .select("cart -_id")
+      // .execPopulate();
+
+      return res.status(200).json(userCart);
+    }
+    return res.status(200).json({
+      message: "no es instance perro",
+      user: req.user,
+      hola: "este hola",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const addProductToCart = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const user = await User.findById(userId);
+    user
+      .populate({
+        path: "cart.items.productId",
+      })
+      .select("cart -_id");
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// export const postCart = (req, res) => {
+//   const prodId = req.body.productId;
+//   Product.findById(prodId, (product) => {
+//     Cart.addProduct(prodId, product.price);
+//   });
+//   res.redirect("/cart");
 // };
 
-export const getCart = (req, res) => {
-  Cart.getCart((cart) => {
-    Product.fetchAll((products) => {
-      const cartProducts = [];
-      for (let product of products) {
-        const cartProductData = cart.products.find(
-          (prod) => prod.id === product.id
-        );
-        if (cartProductData) {
-          cartProducts.push({ productData: product, qty: cartProductData.qty });
-        }
-      }
-      res.render("shop/cart", {
-        path: "/cart",
-        pageTitle: "Your Cart",
-        products: cartProducts,
-      });
-    });
-  });
-};
-
-export const postCart = (req, res) => {
-  const prodId = req.body.productId;
-  Product.findById(prodId, (product) => {
-    Cart.addProduct(prodId, product.price);
-  });
-  res.redirect("/cart");
-};
-
-export const postCartDeleteProduct = (req, res) => {
-  const prodId = req.body.productId;
-  Product.findById(prodId, (product) => {
-    Cart.deleteProduct(prodId, product.price);
-    res.redirect("/cart");
-  });
-};
+// export const postCartDeleteProduct = (req, res) => {
+//   const prodId = req.body.productId;
+//   Product.findById(prodId, (product) => {
+//     Cart.deleteProduct(prodId, product.price);
+//     res.redirect("/cart");
+//   });
+// };
 
 export const getOrders = (req, res) => {
   res.render("shop/orders", {

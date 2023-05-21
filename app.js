@@ -3,10 +3,20 @@ import express from "express";
 // import get404 from "./controllers/error.js";
 import shopRoutes from "./routes/shop.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import userRoutes from "./routes/user.routes.js";
 import cors from "cors";
 // import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
 import mongoConnect from "./util/database.js";
+import session from "express-session";
+// import { MongoClient } from "mongodb";
+import * as dotenv from "dotenv";
+import MongoDBStore from "connect-mongodb-session";
+import handleLogin from "./util/sessionHanlder.js";
+
+dotenv.config();
+
+const dbHost = process.env.SERVER_URL;
 
 const server = express();
 
@@ -24,10 +34,25 @@ server.use(cors("*"));
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 server.use(express.static(path.join(__dirname, "public")));
 
+const MongoDBStoreSession = MongoDBStore(session);
+var store = new MongoDBStoreSession({
+  uri: dbHost,
+  collection: "sessions",
+});
+
+server.use(
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    store,
+  })
+);
+
+server.use("/user", userRoutes);
+server.use(handleLogin);
 server.use("/admin", adminRoutes);
 server.use(shopRoutes);
-
-// server.use(get404);
 
 const PORT = process.env.PORT || 4000;
 
