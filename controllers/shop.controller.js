@@ -26,26 +26,16 @@ export const getProduct = async (req, res) => {
 
 export const getCart = async (req, res) => {
   try {
-    // const { user } = req;
-    // const { userId } = req.body;
-    // const userCart = await User.findById(userId)
-    if (req.user instanceof User) {
-      const userCart = await req.user
-        .populate("cart.items.productId")
-        .execPopulate();
-      // .populate({
-      //   path: "cart.items.productId",
-      // })
-      // .select("cart -_id")
-      // .execPopulate();
+    // const userCart = await User.findById(req.user._id).select("cart -_id");
+    const userCart = await req.user.select("cart")//populate("cart.items.productId");
 
-      return res.status(200).json(userCart);
-    }
-    return res.status(200).json({
-      message: "no es instance perro",
-      user: req.user,
-      hola: "este hola",
-    });
+    return res.status(200).json(userCart);
+    // }
+    // return res.status(200).json({
+    //   message: "no es instance perro",
+    //   user: req.user,
+    //   hola: "este hola",
+    // });
   } catch (error) {
     console.log(error);
   }
