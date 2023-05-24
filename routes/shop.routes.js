@@ -3,10 +3,12 @@ import {
   getProducts,
   getProduct,
   getCart,
-  postCart,
-  postCartDeleteProduct,
-  getOrders,
-  getCheckout,
+  addProductToCart,
+  // getCart,
+  // postCart,
+  // postCartDeleteProduct,
+  // getOrders,
+  // getCheckout,
 } from "../controllers/shop.controller.js";
 
 const router = express.Router();
@@ -15,14 +17,19 @@ router.get("/products", getProducts);
 
 router.get("/products/:productId", getProduct);
 
-router.get("/cart", getCart);
+router.get("/get-cart", getCart);
 
-router.post("/cart", postCart);
+router.post("/add-product", addProductToCart);
 
-router.post("/cart-delete-item", postCartDeleteProduct);
 
-router.get("/orders", getOrders);
+// router.get("/cart", getCart);
 
-router.get("/checkout", getCheckout);
+// router.post("/cart", postCart);
+
+// router.post("/cart-delete-item", postCartDeleteProduct);
+
+// router.get("/orders", getOrders);
+
+// router.get("/checkout", getCheckout);
 
 export default router;
