@@ -12,7 +12,7 @@ import session from "express-session";
 // import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
 import MongoDBStore from "connect-mongodb-session";
-import handleLogin from "./util/sessionHanlder.js";
+import isAuth from "./midlewares/sessionHanlder.js";
 
 dotenv.config();
 
@@ -50,9 +50,8 @@ server.use(
 );
 
 server.use("/user", userRoutes);
-server.use(handleLogin);
-server.use("/admin", adminRoutes);
-server.use("/cart", shopRoutes);
+server.use("/admin", isAuth, adminRoutes);
+server.use("/cart", isAuth, shopRoutes);
 
 const PORT = process.env.PORT || 4000;
 
