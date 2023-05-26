@@ -16,12 +16,10 @@ import isAuth from "./midlewares/sessionHanlder.js";
 
 dotenv.config();
 
+const PORT = process.env.PORT || 4000;
 const dbHost = process.env.SERVER_URL;
 
 const server = express();
-
-server.set("view engine", "ejs");
-server.set("views", "views");
 
 /* it is use to transform the information incoming from the http requests */
 server.use(express.json());
@@ -53,7 +51,18 @@ server.use("/user", userRoutes);
 server.use("/admin", isAuth, adminRoutes);
 server.use("/cart", isAuth, shopRoutes);
 
-const PORT = process.env.PORT || 4000;
+// error handling
+server.use("*", (req, res, next) => {
+  const error = new Error("Route not found");
+  error.status = 404;
+  next(error);
+});
+
+server.use((error, req, res) => {
+  return res
+    .status(error.status || 500)
+    .json(error.message || "Unexpected error");
+});
 
 mongoConnect(() => {
   server.listen(PORT, () => {

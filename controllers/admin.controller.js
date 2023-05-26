@@ -1,7 +1,7 @@
 import Product from "../models/product.model.js";
 import NotFoundError from "../util/error.js";
 
-export const postAddProduct = async (req, res) => {
+export const postAddProduct = async (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
   const product = new Product({ title, price, imageUrl, description });
 
@@ -10,11 +10,11 @@ export const postAddProduct = async (req, res) => {
 
     return res.send({ message: `correctly saved ${savedProduct}` });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-export const postEditProduct = async (req, res) => {
+export const postEditProduct = async (req, res, next) => {
   const { productId } = req.body;
   try {
     const updatedTitle = req.body.title;
@@ -38,12 +38,11 @@ export const postEditProduct = async (req, res) => {
 
     return res.send(`the product ${updatedProduct}`);
   } catch (error) {
-    console.log(error);
-    res.status(500).send("Internal server error");
+    next(error);
   }
 };
 
-export const postDeleteProduct = async (req, res) => {
+export const postDeleteProduct = async (req, res, next) => {
   const prodId = req.body.productId;
 
   try {
@@ -54,8 +53,6 @@ export const postDeleteProduct = async (req, res) => {
       throw new NotFoundError("No product found with that ID");
     }
   } catch (error) {
-    // Log the error using a logging library like Winston or Bunyan
-    res.status(500).send("Internal server error");
-    console.error(error);
+    next(error);
   }
 };
