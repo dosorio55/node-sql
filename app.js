@@ -1,18 +1,16 @@
 import path from "path";
 import express from "express";
-// import get404 from "./controllers/error.js";
 import shopRoutes from "./routes/shop.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import cors from "cors";
-// import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
 import mongoConnect from "./util/database.js";
 import session from "express-session";
-// import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
 import MongoDBStore from "connect-mongodb-session";
-import isAuth from "./midlewares/sessionHanlder.js";
+import isAuth from "./midlewares/sessionHandler.js";
+import imageUploadMiddleware from "./midlewares/imageHanlder.js";
 
 dotenv.config();
 
@@ -48,7 +46,7 @@ server.use(
 );
 
 server.use("/user", userRoutes);
-server.use("/admin", isAuth, adminRoutes);
+server.use("/admin", isAuth, imageUploadMiddleware, adminRoutes);
 server.use("/cart", isAuth, shopRoutes);
 
 // error handling
@@ -59,6 +57,7 @@ server.use("*", (req, res, next) => {
 });
 
 server.use((error, req, res) => {
+  console.log("ha ocurrido un error");
   return res
     .status(error.status || 500)
     .json(error.message || "Unexpected error");

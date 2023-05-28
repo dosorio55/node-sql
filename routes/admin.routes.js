@@ -1,8 +1,6 @@
 import express from "express";
 import {
-  // getAddProduct,
   postAddProduct,
-  // getEditProduct,
   postEditProduct,
   postDeleteProduct,
 } from "../controllers/admin.controller.js";

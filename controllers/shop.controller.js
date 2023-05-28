@@ -1,4 +1,6 @@
+import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
+import path from "path";
 
 export const getProducts = async (req, res, next) => {
   try {
@@ -27,7 +29,7 @@ export const getCart = async (req, res, next) => {
   try {
     const userCart = await req.user.populate("cart.items.productId");
 
-    return res.status(200).json(userCart);
+    return res.status(200).json({ cart: userCart.cart.items });
   } catch (error) {
     next(error);
   }
@@ -62,6 +64,53 @@ export const addProductToCart = async (req, res, next) => {
     await user.save();
 
     return res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const submitOrder = async (req, res, next) => {
+  try {
+    const { user } = req;
+    const { cart } = await user.populate("cart.items.productId");
+
+    const order = new Order({ products: cart.items, userId: user._id });
+    const savedOrder = await order.save();
+
+    user.cart.items = [];
+    await user.save();
+
+    return res.status(200).json(savedOrder);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find({ userId: req.user._id });
+
+    if (!orders) {
+      return res.status(404).send("No orders found for this user");
+    }
+
+    return res.status(200).json(orders);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getInvoice = async (req, res, next) => {
+  try {
+   const order = await Order.findById({ userId: req.user._id });
+
+    if (!order) {
+      return res.status(404).send("No orders found for this user");
+    }
+
+    const invoiceName = `invoice-${order._id}.pdf`;
+    const invoicePath = path.join("data", "invoices", invoiceName);
+    
   } catch (error) {
     next(error);
   }

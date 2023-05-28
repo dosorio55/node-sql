@@ -2,8 +2,19 @@ import Product from "../models/product.model.js";
 import NotFoundError from "../util/error.js";
 
 export const postAddProduct = async (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body;
-  const product = new Product({ title, price, imageUrl, description });
+  const { title, price, description } = req.body;
+  const imageFile = req.file;
+
+  if (!imageFile) {
+    return res.status(422).send("No image provided or is not valid");
+  }
+
+  const product = new Product({
+    title,
+    price,
+    imageUrl: imageFile.path,
+    description,
+  });
 
   try {
     const savedProduct = await product.save();
