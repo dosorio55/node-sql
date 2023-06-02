@@ -25,7 +25,16 @@ server.use(express.urlencoded({ extended: true }));
 // server.use(bodyParser.urlencoded({ extended: true }));
 // server.use(express.static(path.join(path.resolve(), "public")));
 
-server.use(cors("*"));
+// headers to avoid CORS error
+server.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+// this is a package to avoid CORS, dont have to have it if you use the headers above
+// server.use(cors("*"));
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 server.use(express.static(path.join(__dirname, "public")));
