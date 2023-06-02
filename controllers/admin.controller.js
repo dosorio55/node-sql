@@ -25,6 +25,10 @@ export const postAddProduct = async (req, res, next) => {
   }
 };
 
+// it is necessary to delete the image from the folder /images
+// const clearImage = (filePath) => {
+
+
 export const postEditProduct = async (req, res, next) => {
   const { productId } = req.body;
   try {
