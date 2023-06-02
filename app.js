@@ -27,9 +27,12 @@ server.use(express.urlencoded({ extended: true }));
 
 // headers to avoid CORS error
 server.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "OPTIONS, GET, POST, PUT, PATCH, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 
@@ -67,9 +70,7 @@ server.use("*", (req, res, next) => {
 
 server.use((error, req, res) => {
   console.log("ha ocurrido un error");
-  return res
-    .status(error.status || 500)
-    .json(error.message || "Unexpected error");
+  res.status(error.status || 500).json(error.message || "Unexpected error");
 });
 
 mongoConnect(() => {
